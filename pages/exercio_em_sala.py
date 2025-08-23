@@ -16,6 +16,7 @@ with col1:
 
 with col2:
     col2.text("Coluna2")
+   
 
 with col3:
     col3.text("Coluna3") 
