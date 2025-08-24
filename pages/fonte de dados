@@ -1,0 +1,7 @@
+import streamlit as st
+
+st.title("fonte de dados")
+st.write("https://www.gov.br/mec/pt-br/assuntos/educacao-basica/musica-na-rede")
+st.write("https://dados.gov.br/dataset/programa-musica-na-rede")
+st.text("O Programa Música na Rede é uma iniciativa da SEDU-ES, FAPES e FAMES")
+st.text("que visa promover a educação musical nas escolas públicas do Espírito Santo.")

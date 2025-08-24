@@ -1,0 +1,5 @@
+import streamlit as st
+
+st.title("metodologia")
+st.text ("Pesquisa de campo para levantar dados opinativos")
+st.text ("Pesquisa em banco de dados do SEGES para avaliar desempenho escolar antes e depois da participação no projeto")
