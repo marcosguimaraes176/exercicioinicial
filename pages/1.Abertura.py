@@ -1,4 +1,5 @@
 import streamlit as st
 
-st.title("abertura")
 
+st.image("/workspaces/exercicioinicial/fotos/música.png")
+st.title("O Programa Música na Rede e sua influência no desempenho escolar")
