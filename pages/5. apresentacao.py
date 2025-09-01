@@ -24,7 +24,7 @@ with col1:
     """,
     unsafe_allow_html=True
 )
-    st.image("/workspaces/exercicioinicial/fotos/bandas.jpeg", caption="bandas")
+    st.image("fotos/bandas.jpeg", caption="bandas")
     with st.container(border=True,horizontal=True):
         st.text("Quantidade de Escolas Bandas:")
         st.text("Quantidade de Estudantes Bandas:")
@@ -40,7 +40,7 @@ with col2:
     """,
     unsafe_allow_html=True
 )
-    st.image("/workspaces/exercicioinicial/fotos/violões.jpeg", caption="violões")
+    st.image("fotos/violões.jpeg", caption="violões")
     with st.container(border=True,horizontal=True):
      st.text("Quantidade de Escolas Violões:")
      st.text("Quantidade de Estudantes Violões:")
@@ -57,7 +57,7 @@ with col3:
     """,
     unsafe_allow_html=True
 )
-    st.image("/workspaces/exercicioinicial/fotos/coral.jpeg", caption="coral")
+    st.image("fotos/coral.jpeg", caption="coral")
     with st.container(border=True,horizontal=True):
      st.text("Quantidade de Escolas Corais:")
      st.text("Quantidade de Estudantes Corais:")
@@ -72,7 +72,7 @@ with col4:
     """,
     unsafe_allow_html=True
 )
-       st.image("/workspaces/exercicioinicial/fotos/sinfônica.jpeg", caption="sinfônica")
+       st.image("fotos/sinfônica.jpeg", caption="sinfônica")
        with st.container(border=True,horizontal=True):
         st.text("Quantidade de Escolas Sinfônica:")
         st.text("Quantidade de Estudantes Sinfônica:")
