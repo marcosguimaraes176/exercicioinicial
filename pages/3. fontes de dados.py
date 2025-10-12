@@ -1,29 +1,31 @@
 import streamlit as st
 import pandas as pd
+import io
+import openpyxl
 
 st.markdown("""
 <style>
-/* Remove o espaço abaixo dos subcabeçalhos (st.subheader) */
+/* Zera o espaçamento abaixo dos subcabeçalhos (st.subheader) */
 h3 {
+    margin-bottom: 0px; 
+    padding-top: 5px; 
+}
+
+/* Zera o espaçamento abaixo de st.dataframe (a tabela) */
+.stDataFrame {
     margin-bottom: 0px; 
 }
 
-/* Reduz o espaço abaixo das tabelas do Streamlit */
-.stDataFrame {
-    margin-bottom: 5px; 
-}
-
-/* Opcional: Reduz o espaço abaixo dos st.text (usado para o df.info) */
+/* Zera o espaçamento abaixo de st.text (usado para o df.info) */
 .stText {
-    margin-bottom: 5px;
+    margin-bottom: 0px;
 }
 
-/* Opcional: Reduz o espaço abaixo das linhas horizontais */
+/* Ajusta a linha divisória (st.markdown("---")) */
 hr {
     margin-top: 10px; 
     margin-bottom: 10px;
 }
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -38,73 +40,93 @@ st.text("SEGES - Sistema Estadual de Gestão Escolar")
 
 # --- Configuração da Página e Título (exemplo) ---
 st.set_page_config(layout="wide")
-st.title("📊 Análise Descritiva da Base de Dados")
-st.markdown("---") # Linha divisória
+st.title("📊 Análise Descritiva de Múltiplas Bases de Dados")
+st.markdown("---")
 
-# --- Carregar o DataFrame (usando o arquivo Excel) ---
-# **Importante:** Certifique-se de que o arquivo "Projetos por Municípios.xlsx"
-# esteja no mesmo diretório do seu script Streamlit, ou use o caminho completo.
+# Nomes dos arquivos
+FILE_PROJETOS = "data/Projetos por Municípios.xlsx"
+FILE_MUSICA = "data/Relatório Música na Rede1.xlsx" # ATENÇÃO: Confirme este nome!
+
+df_projetos = None
+df_musica = None
+
+# Carregamento da Primeira Tabela
 try:
-    df = pd.read_excel("data/Projetos por Municípios.xlsx", engine='openpyxl')
+    st.info(f"Carregando {FILE_PROJETOS}...")
+    df_projetos = pd.read_excel(FILE_PROJETOS)
 except FileNotFoundError:
-    st.error("Erro: O arquivo 'Projetos por Municípios.xlsx' não foi encontrado. Verifique o caminho.")
-    st.stop()
+    st.error(f"🚨 Erro: O arquivo '{FILE_PROJETOS}' não foi encontrado.")
 except Exception as e:
-    st.error(f"Erro ao carregar o arquivo Excel: {e}")
-    st.stop()
+    st.error(f"🚨 Erro ao carregar {FILE_PROJETOS}: {e}")
 
-# --- Gerar a Tabela Descritiva usando .describe() ---
-# O .describe() gera estatísticas apenas para colunas numéricas por padrão.
-# Para incluir colunas de texto (como a contagem de municípios), use include='all'.
+# Carregamento da Segunda Tabela
 try:
-    df_descritivo = df.describe(include='all').T  # .T para transpor a tabela (linhas viram colunas e vice-versa)
-
-    # Opcional: Tratar o index para melhor visualização (nomes das colunas)
-    df_descritivo.index.name = 'Variável'
-    df_descritivo = df_descritivo.reset_index()
-    
+    st.info(f"Carregando {FILE_MUSICA}...")
+    df_musica = pd.read_excel(FILE_MUSICA)
+except FileNotFoundError:
+    st.error(f"🚨 Erro: O arquivo '{FILE_MUSICA}' não foi encontrado.")
 except Exception as e:
-    st.warning(f"Ocorreu um erro ao gerar o describe() (pode ser problema de tipos de dados misturados): {e}")
-    # Uma alternativa é usar o describe() apenas para colunas numéricas se a versão 'all' falhar.
+    st.error(f"🚨 Erro ao carregar {FILE_MUSICA}: {e}")
+
+
+# --- 3. FUNÇÃO AUXILIAR PARA EXIBIR DADOS ---
+
+def exibir_tabelas(df, titulo_principal):
+    """
+    Exibe as três visualizações (describe, head, info) para um dado DataFrame.
+    """
+    # Apenas exibe se o DataFrame foi carregado com sucesso
+    if df is None:
+        return
+        
+    st.header(f"Base: {titulo_principal}")
+
+    # 1. Tabela Descritiva (describe)
+    st.subheader("1. Estatísticas Descritivas (describe)")
+    
+    # Prepara o describe para exibir colunas numéricas e categóricas
     try:
+        df_descritivo = df.describe(include='all').T 
+    except Exception as e:
+        st.warning(f"⚠️ Aviso: Não foi possível gerar o describe completo para **{titulo_principal}**. Exibindo apenas o numérico. Erro: {e}")
         df_descritivo = df.describe().T
-        df_descritivo.index.name = 'Variável'
-        df_descritivo = df_descritivo.reset_index()
-    except:
-        st.error("Falha ao gerar o describe() mesmo para colunas numéricas.")
-        st.stop()
+        
+    df_descritivo.index.name = 'Variável'
+    
+    st.dataframe(
+        df_descritivo.reset_index(),
+        use_container_width=True, 
+        hide_index=True 
+    )
+
+    st.markdown("---") 
+
+    # 2. Visualização do Head (Organização da Tabela Original)
+    st.subheader("2. Visualização dos Dados Originais (Primeiras Linhas)")
+    st.dataframe(df.head(), use_container_width=True)
+
+    st.markdown("---") 
+
+    # 3. Informações da Estrutura (info)
+    st.subheader("3. Tipos de Dados e Contagem de Não-Nulos (info)")
+
+    # Captura e exibe o df.info()
+    buffer = io.StringIO()
+    df.info(buf=buffer)
+    s = buffer.getvalue()
+    st.text(s)
+    
+    st.markdown("---") # Separador final entre as grandes seções
 
 
-# --- Exibir a Tabela no Streamlit ---
-st.subheader("Tabela de Estatísticas Descritivas da Base de Dados")
+# --- 4. EXIBIÇÃO SEQUENCIAL DAS BASES ---
 
-# Usamos st.dataframe() para uma tabela interativa e bonita
-st.dataframe(
-    df_descritivo,
-    use_container_width=True, # Usa a largura total do container
-    hide_index=True          # Esconde o índice numérico
-)
+# Exibe a primeira base de dados
+exibir_tabelas(df_projetos, "**Projetos por Municípios**")
 
-st.markdown("""
-<style>
-/* Estilo para ajustar a altura da tabela descritiva (opcional) */
-.stDataFrame {
-    height: 600px; 
-}
-</style>
-""", unsafe_allow_html=True)
+# Adiciona um separador grande para diferenciar visualmente as duas bases
+st.markdown("# 🔔 Início da Segunda Base de Dados")
+st.markdown("---") 
 
-st.subheader("Visualização da Estrutura dos Dados Originais (Head)")
-
-# Exibir as primeiras 5 linhas para ver o formato e os dados
-st.dataframe(df.head(), use_container_width=True)
-
-st.subheader("Tipos de Dados e Contagem de Não-Nulos (info)")
-
-# Exibir informações sobre o tipo de dado de cada coluna (opcional, mas muito útil)
-# O st.write() ou st.text() aceita essa string
-import io
-buffer = io.StringIO()
-df.info(buf=buffer)
-s = buffer.getvalue()
-st.text(s)
+# Exibe a segunda base de dados
+exibir_tabelas(df_musica, "**Relatório Música na Rede** (Estudantes Atendidos)")
