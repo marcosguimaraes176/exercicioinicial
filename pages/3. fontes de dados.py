@@ -66,3 +66,18 @@ st.markdown("""
 }
 </style>
 """, unsafe_allow_html=True)
+
+st.subheader("Visualização da Estrutura dos Dados Originais (Head)")
+
+# Exibir as primeiras 5 linhas para ver o formato e os dados
+st.dataframe(df.head(), use_container_width=True)
+
+st.subheader("Tipos de Dados e Contagem de Não-Nulos (info)")
+
+# Exibir informações sobre o tipo de dado de cada coluna (opcional, mas muito útil)
+# O st.write() ou st.text() aceita essa string
+import io
+buffer = io.StringIO()
+df.info(buf=buffer)
+s = buffer.getvalue()
+st.text(s)
