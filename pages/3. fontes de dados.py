@@ -44,8 +44,8 @@ st.title("📊 Análise Descritiva e Evolução de Projetos")
 st.markdown("---")
 
 # Nomes dos arquivos
-FILE_PROJETOS = "Projetos por Municípios.xlsx"
-FILE_MUSICA = "Relatório Música na Rede.xlsx"
+FILE_PROJETOS = "data/Projetos por Municípios.xlsx"
+FILE_MUSICA = "data/Relatório Música na Rede1.xlsx"
 
 df_projetos = None
 df_musica = None
