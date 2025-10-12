@@ -1,6 +1,33 @@
 import streamlit as st
 import pandas as pd
 
+st.markdown("""
+<style>
+/* Remove o espaço abaixo dos subcabeçalhos (st.subheader) */
+h3 {
+    margin-bottom: 0px; 
+}
+
+/* Reduz o espaço abaixo das tabelas do Streamlit */
+.stDataFrame {
+    margin-bottom: 5px; 
+}
+
+/* Opcional: Reduz o espaço abaixo dos st.text (usado para o df.info) */
+.stText {
+    margin-bottom: 5px;
+}
+
+/* Opcional: Reduz o espaço abaixo das linhas horizontais */
+hr {
+    margin-top: 10px; 
+    margin-bottom: 10px;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+
 st.title("fonte de dados")
 
 st.write("1. Site do Programa Música na Rede")
