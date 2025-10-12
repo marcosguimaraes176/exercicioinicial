@@ -126,7 +126,7 @@ def calcular_e_plotar_musica(df):
     # --- CÁLCULO DO TOTAL GERAL ---
     
     # Colunas de interesse (ANOS)
-    colunas_anos = ['2023', '2024', '2025']
+    colunas_anos = ['Alunos atendidos 2023', 'Alunos atendidos 2024', 'Alunos atendidos 2025']
     
     # Tenta calcular o total, tratando erros se as colunas não existirem
     try:
