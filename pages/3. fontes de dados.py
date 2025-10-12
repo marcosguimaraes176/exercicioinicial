@@ -130,3 +130,78 @@ st.markdown("---")
 
 # Exibe a segunda base de dados
 exibir_tabelas(df_musica, "**Relatório Música na Rede** (Estudantes Atendidos)")
+
+def exibir_analise_musica(df):
+    """
+    Combina o cálculo, o gráfico e a exibição das tabelas descritivas 
+    da base Música na Rede em uma única chamada.
+    """
+    if df is None:
+        return
+
+    # A. CÁLCULO E GRÁFICO (Como definimos antes)
+    st.header("Base: **Relatório Música na Rede** (Estudantes Atendidos)")
+    
+    # Colunas de interesse (ANOS)
+    colunas_anos = ['2023', '2024', '2025']
+    
+    # --- CÁLCULO DO TOTAL GERAL ---
+    try:
+        total_geral = df[colunas_anos].sum().sum()
+        st.subheader("📈 Análise de Atendimentos")
+        st.metric(
+            label="Total Geral de Estudantes Atendidos (2023-2025)", 
+            value=f"{total_geral:,.0f}".replace(",", "_").replace(".", ",").replace("_", ".") # Formatação Brasileira
+        )
+        st.markdown("---")
+
+    except KeyError:
+        st.warning(f"⚠️ Aviso: Não foi possível calcular o Total Geral. Verifique se as colunas {colunas_anos} existem.")
+    except Exception as e:
+         st.warning(f"⚠️ Ocorreu um erro inesperado no cálculo: {e}")
+
+
+    # --- GERAÇÃO DO GRÁFICO DE EVOLUÇÃO ---
+    st.subheader("Evolução Anual de Atendimentos por Projeto")
+
+    try:
+        coluna_projeto = 'Projeto' if 'Projeto' in df.columns else df.columns[0]
+        df_plot = df[[coluna_projeto] + colunas_anos].set_index(coluna_projeto).T 
+        st.line_chart(df_plot)
+        st.caption(f"Cada linha representa a evolução de um item da coluna: '{coluna_projeto}' ao longo dos anos.")
+        st.markdown("---")
+
+    except Exception as e:
+        st.warning(f"⚠️ Não foi possível gerar o gráfico de linhas. Verifique as colunas.")
+
+    
+    # B. EXIBIÇÃO DAS TABELAS DESCRITIVAS (Agora dentro desta função, eliminando a chamada externa)
+
+    # 1. Tabela Descritiva (describe)
+    st.subheader("1. Estatísticas Descritivas (describe)")
+    
+    # ... [O restante do código de exibição do describe, head e info, que já estava em exibir_tabelas, viria aqui]
+    
+    # Para ser conciso, usaremos a função 'exibir_tabelas' para o restante das visualizações
+    # NOTE: Isso pressupõe que você só quer o gráfico/cálculo ANTES das 3 tabelas
+    # Se você quiser o gráfico/cálculo no MEIO das 3 tabelas, o código seria diferente.
+
+    # 1. Tabela Descritiva (describe)
+    st.subheader("1. Estatísticas Descritivas (describe)")
+    # ... [Código do Describe]
+    
+    # 2. Visualização do Head (Organização da Tabela Original)
+    st.subheader("2. Visualização dos Dados Originais (Primeiras Linhas)")
+    # ... [Código do Head]
+    
+    # 3. Informações da Estrutura (info)
+    st.subheader("3. Tipos de Dados e Contagem de Não-Nulos (info)")
+    # ... [Código do Info]
+
+
+# --- 4. EXIBIÇÃO SEQUENCIAL DAS BASES (FINAL) ---
+# ... (Este é o bloco que fica no fim do seu script, chamando as funções)
+# exibir_tabelas(df_projetos, "**Projetos por Municípios**")
+# st.markdown("#") 
+# st.markdown("---") 
+# exibir_analise_musica(df_musica) # Chamada única!
